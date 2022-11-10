@@ -7,6 +7,6 @@ $ pip install -r requirements.py
 ## Training
 ### Example
 ```
-$ python run.py
+$ python train.py
 ```
 
