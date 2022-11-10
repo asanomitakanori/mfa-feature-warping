@@ -1,0 +1,32 @@
+# Hydra configuration file for training
+
+train:
+  imgs: '../DroneCrowd2/dataset/train_data/train_imgs/'    #
+  mpms: '../DroneCrowd2/dataset/train_data/train_mpms/'    #
+  epochs: 30                                # Number of epoch
+  batch_size: 3                              # Batch size
+  video_number : 8
+  lr: 0.001                                  # Learning rate of Adam
+  train: True
+  seed : 0
+  
+eval:
+  imgs: '../DroneCrowd2/dataset/val_data/val_imgs/'      #
+  mpms: '../DroneCrowd2/dataset/val_data/val_mpms/'      #
+  rate: 0.2                                  # Evaluation rate for no eval data
+  batch_size: 3 
+  train: False
+  
+output:
+  save: True
+  dir : 'output'
+  
+load: False                    # If you use a trained model, please rewrite it.
+
+dataloader:
+  edge: 10                     # Image edge range (This area will not be cropped)
+  height: 1024                 # Number of pixel of crop height
+  width: 1856                  # Number of pixel of crop width
+  
+device_num:
+  1
