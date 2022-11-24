@@ -10,7 +10,7 @@ import random
 from hydra.utils import to_absolute_path as abs_path
 
 
-class MPM_Dataset(Dataset):
+class Heatmap_Dataset(Dataset):
     def __init__(self, cfg_type, cfg_data):
         self.imgs_dir = abs_path(cfg_type.imgs)
         self.gts_dir = abs_path(cfg_type.mpms)

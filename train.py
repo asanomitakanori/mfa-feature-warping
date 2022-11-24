@@ -18,7 +18,7 @@ import hydra
 from hydra.utils import to_absolute_path as abs_path
 
 from utils.batchs_sampler import SequentialSampler
-from utils.mpm_loader_heat import MPM_Dataset
+from utils.mpm_loader_heat import Heatmap_Dataset
 import utils.dataset_test as dataset_test
 from utils.val_path import val_path
 from utils.seed import *
@@ -27,15 +27,16 @@ from utils.seed import *
 def train_net(net,
               device,
               cfg,
-              val_clip):
+              val_clip
+              ):
               
     if cfg.eval.imgs is not None:
-        train = MPM_Dataset(cfg.train, cfg.dataloader)
+        train = Heatmap_Dataset(cfg.train, cfg.dataloader)
         val = dataset_test.listDataset(val_clip, shuffle=False, transform=transforms.Compose([transforms.ToTensor()]), train=False)
         n_train = len(train)
         n_val = len(val)
     else:
-        dataset = MPM_Dataset(cfg.train, cfg.dataloader)
+        dataset = Heatmap_Dataset(cfg.train, cfg.dataloader)
         n_val = int(len(dataset) * cfg.eval.rate)
         n_train = len(dataset) - n_val
         train, val = random_split(dataset, [n_train, n_val])
@@ -121,7 +122,6 @@ def main(cfg):
     os.makedirs(abs_path(cfg.output.dir)) if os.path.isdir(abs_path(cfg.output.dir)) is False else None
 
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-    # device = torch.device(f'cuda:{cfg.device_num}' if torch.cuda.is_available() else 'cpu')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logging.info(f'Using device {device}')
 

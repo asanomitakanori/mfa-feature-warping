@@ -1,18 +1,16 @@
 # Hydra configuration file for training
 
 train:
-  imgs: '../DroneCrowd2/dataset/train_data/train_imgs/'    #
-  mpms: '../DroneCrowd2/dataset/train_data/train_mpms/'    #
-  epochs: 30                                # Number of epoch
+  imgs: 'dataset/train_imgs/'                # Train images path
+  epochs: 30                                 # Number of epoch
   batch_size: 3                              # Batch size
-  video_number : 8
+  video_number : 8                           # Video num (All input number is batch_size * video num)
   lr: 0.001                                  # Learning rate of Adam
   train: True
   seed : 0
   
 eval:
-  imgs: '../DroneCrowd2/dataset/val_data/val_imgs/'      #
-  mpms: '../DroneCrowd2/dataset/val_data/val_mpms/'      #
+  imgs: '.dataset/val_imgs/'                 # Validation images path
   rate: 0.2                                  # Evaluation rate for no eval data
   batch_size: 3 
   train: False

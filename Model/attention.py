@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 
 
-class DoubleConv2(nn.Module):
+class ConvMFA(nn.Module):
     """(convolution => [BN] => ReLU) * 2"""
 
     def __init__(self, in_channels, out_channels, mid_channels=None):
@@ -26,9 +26,9 @@ class MultiFrameAttention(nn.Module):
     """(Attention layer) use convolution instead of FC layer"""
     def __init__(self, in_channels, out_channels, sub_batch_size):
         super().__init__()
-        self.Wq = DoubleConv2(in_channels, out_channels)
-        self.Wk = DoubleConv2(in_channels, out_channels)
-        self.Wv = DoubleConv2(in_channels, out_channels)
+        self.Wq = ConvMFA(in_channels, out_channels)
+        self.Wk = ConvMFA(in_channels, out_channels)
+        self.Wv = ConvMFA(in_channels, out_channels)
         self.softmax = nn.Softmax(dim =2)
         self.sub_batch_size = sub_batch_size
 

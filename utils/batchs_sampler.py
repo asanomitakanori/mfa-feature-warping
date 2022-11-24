@@ -1,6 +1,5 @@
 import numpy as np
 from torch.utils import data as data
-import torch
 import random
 
 def split_list(l, n):
@@ -43,9 +42,3 @@ class SequentialSampler(data.Sampler):
             return iter(temp)
 
 
-# dataset = MyDataset(300)
-# sampler = SequentialSampler(dataset, 6, shuffle = True)
-
-# Dataloader = torch.utils.data.DataLoader(dataset, batch_size = 1, sampler = sampler)
-# for i in Dataloader:
-#     print(i[1])

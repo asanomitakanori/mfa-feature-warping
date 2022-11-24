@@ -168,7 +168,7 @@ class Flow_estimation(nn.Module):
         return flow_out, output
 
 class Backlow_estimation(nn.Module):
-    '''Estimating flow (tgt : index=0, src : others)'''
+    '''Estimating flow (tgt : index=1. 2. ...., src : index = 1. 2. ....)'''
     def __init__(self, n_channels, sub_batch):
         super().__init__()
         num = n_channels
