@@ -5,7 +5,7 @@
 $ pip install -r requirements.py
 ```
 
-## Requirements
+## Create Ground-Truth
 If you use this code, run this command to create heatmap ground-truth first.
 Training & Validation ground-truth are added in dataset directory.
 ```
