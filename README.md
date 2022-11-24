@@ -6,8 +6,8 @@ $ pip install -r requirements.py
 ```
 
 ## Requirements
-If you use this code, run this command to create heatmap gts.
-Training & Validation gts are added in dataset directory.
+If you use this code, run this command to create heatmap ground-truth first.
+Training & Validation ground-truth are added in dataset directory.
 ```
 $ python create_gts.py
 ```
