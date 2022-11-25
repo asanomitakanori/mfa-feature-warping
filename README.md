@@ -1,4 +1,4 @@
-# mfa-feature-warping
+# Multi-frame Attention with Feature-level Warping
 
 ## Requirements
 ```
