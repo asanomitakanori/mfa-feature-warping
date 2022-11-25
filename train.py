@@ -8,18 +8,17 @@ import torch.nn as nn
 from torch import optim
 from torch.utils.data import DataLoader, random_split
 from torchvision import transforms
+from torch.utils.tensorboard import SummaryWriter
 
 from val import eval_net
 from Model.model import MFAmodel as model
-
-from torch.utils.tensorboard import SummaryWriter
 
 import hydra
 from hydra.utils import to_absolute_path as abs_path
 
 from utils.batchs_sampler import SequentialSampler
-from utils.mpm_loader_heat import Heatmap_Dataset
-import utils.dataset_test as dataset_test
+from utils.dataset_train import Heatmap_Dataset
+import utils.dataset_val as Dataset
 from utils.val_path import val_path
 from utils.seed import *
 
@@ -32,7 +31,7 @@ def train_net(net,
               
     if cfg.eval.imgs is not None:
         train = Heatmap_Dataset(cfg.train, cfg.dataloader)
-        val = dataset_test.listDataset(val_clip, shuffle=False, transform=transforms.Compose([transforms.ToTensor()]), train=False)
+        val = Dataset.listDataset(val_clip, shuffle=False, transform=transforms.Compose([transforms.ToTensor()]), train=False)
         n_train = len(train)
         n_val = len(val)
     else:
