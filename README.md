@@ -1,5 +1,8 @@
 # Multi-Frame Attention with Feature-Level Warping for Drone Crowd Tracking
 
+## Overview of our method
+![Illustration](./image/overview.png)
+
 ## Requirements
 ```
 $ pip install -r requirements.py
