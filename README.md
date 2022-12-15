@@ -4,8 +4,6 @@
 ![Illustration](./image/overview.png)
 This repository provides the offical release of the code package for my paper Multi-Frame Attention with Feature-Level Warping for Drone Crowd Tracking in WACV 2022 (url comming soon). 
 
-</ul>
-{: align="center"}
 <table>
 <thead>
 <tr>
@@ -37,7 +35,7 @@ This repository provides the offical release of the code package for my paper Mu
 <td align="center"><strong>41.91</strong></td>
 <td align="center"><strong>42.08</strong></td>
 </tr>    
-
+  
 </tbody></table>
 
 ## Requirements
