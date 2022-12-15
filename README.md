@@ -4,6 +4,41 @@
 ![Illustration](./image/overview.png)
 This repository provides the offical release of the code package for my paper Multi-Frame Attention with Feature-Level Warping for Drone Crowd Tracking in WACV 2022 (url comming soon). 
 
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">Tracking-mAP</th>
+<th align="center">Localization-mAP</th>
+
+</tr>
+<tr>
+<td align="center">Heamap (CVPR17)</td>
+<td align="center">31.44</td>
+<td align="center">29.26</td>
+</tr> 
+
+<tr>
+<td align="center">Heamap + Ours</td>
+<td align="center"><strong>33.25</strong></td>
+<td align="center"><strong>32.19</strong></td>
+</tr> 
+
+<tr>
+<td align="center"><strong>MPM</strong></td>
+<td align="center"><strong>41.07</strong></td>
+<td align="center"><strong>43.43</strong></td>
+</tr>    
+
+<tr>
+<td align="center"><strong>MPM + Ours</strong></td>
+<td align="center"><strong>41.91</strong></td>
+<td align="center"><strong>42.08</strong></td>
+</tr>    
+
+</tbody></table>
+
 ## Requirements
 ```
 $ pip install -r requirements.py
