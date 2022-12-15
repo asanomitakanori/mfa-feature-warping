@@ -14,13 +14,13 @@ This repository provides the offical release of the code package for my paper Mu
 
 </tr>
 <tr>
-<td align="center">Heamap (CVPR17)</td>
+<td align="center">Heamap</td>
 <td align="center">31.44</td>
 <td align="center">29.26</td>
 </tr> 
 
 <tr>
-<td align="center">Heamap + Ours</td>
+<td align="center"><strong>Heamap + Ours</strong></td>
 <td align="center"><strong>33.25</strong></td>
 <td align="center"><strong>32.19</strong></td>
 </tr> 
