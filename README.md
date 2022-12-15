@@ -26,9 +26,9 @@ This repository provides the offical release of the code package for my paper Mu
 </tr> 
 
 <tr>
-<td align="center"><strong>MPM</strong></td>
-<td align="center"><strong>41.07</strong></td>
-<td align="center"><strong>43.43</strong></td>
+<td align="center">MPM</td>
+<td align="center">41.07</td>
+<td align="center">43.43</td>
 </tr>    
 
 <tr>
