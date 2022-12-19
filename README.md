@@ -2,6 +2,8 @@
 
 ## Overview of our method
 ![Illustration](./image/overview.png)
+Overview of our method. (a) Entire network structure, (b) Multi-frame attention with feature-level warping. The module consists of three modules: forward warping, multi-frame attention, and backward warping. Forward warping aligns features according to frame $T$, and multi-frame attention aggregate temporal context. Since the extracted feature maps are aligned to $T$, the feature maps are warped into features that represent original positions by backward warping.
+
 This repository provides the offical release of the code package for my paper Multi-Frame Attention with Feature-Level Warping for Drone Crowd Tracking in WACV 2022 (url comming soon). 
 
 This method is designed to better address the problem of drone crowd tracking by efficiently aggregating multiple frames information. Comparing to conventional seven methods, proposed method improves the tracking and localization mAP from backbone score. 
