@@ -9,11 +9,17 @@ This repository provides the offical release of the code package for my paper Mu
 This method is designed to better address the problem of drone crowd tracking by efficiently aggregating multiple frames information. Comparing to conventional seven methods, proposed method improves the tracking and localization mAP from backbone score. 
 
 ## Requirements
+* PyTorch 1.12.0
+* cuda && cudnn
+* Download the DroneCrowd datasets
+DroneCrowd [BaiduYun](https://pan.baidu.com/s/1hjXoVZJ16y9Tf7UXcJw3oQ)(code:ml1u)| [GoogleDrive](https://drive.google.com/drive/folders/1EUKLJ1WmrhWTNGt4wFLyHRfspJAt56WN?usp=sharing) 
+
+You can 
 ```
-$ pip install -r requirements.py
+$ pip install -r env/requirements.py
 ```
 
-## Create Ground-Truth
+## Ground-Truth
 If you use this code, run this command to create heatmap ground-truth first.
 Training & Validation ground-truth are added in dataset directory.
 ```
@@ -21,10 +27,15 @@ $ python create_gts.py
 ```
 
 ## Training
-### Example
+1. Prepare the training set. In dataset directory(example datsets are setted). Default dataset's path is determined at  <code>config/train.yaml</code>.
+2. Run the training script	
 ```
 $ python train.py
 ```
+
+## Pre-trained models	
+The trained models are available in the folder <code>/models/trained</code>.
+
 ## Dataset
 ### DroneCrowd (Full Version)
 This full version consists of 112 video clips with 33,600 high resolution frames (i.e., 1920x1080) captured in 70 different scenarios.  With intensive amount of effort, our dataset provides 20,800 people trajectories with 4.8 million head annotations and several video-level attributes in sequences.  
