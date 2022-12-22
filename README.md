@@ -50,7 +50,6 @@ Please prepare your data you installed as above as follows.
               ├── sequence011                # Each sequence has 300 images 
               ├── sequence015
               ├── :
-
 ```
 </div></details>
 
@@ -77,7 +76,6 @@ You can set up input path/output path/parameters from config/train.yaml
 The trained models are available in the folder <code>/models/trained</code>.
 
 ## Citation
-
 Please cite this paper if you want to use it in your work.
 ```
 @inproceedings{dronecrowd_cvpr2021,
