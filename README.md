@@ -56,7 +56,7 @@ Please prepare your data you installed as above as follows.
 </div></details>
 
 
-## Ground-Truth
+### Ground-Truth
 If you use this code, run this command to create heatmap's ground-truth first.
 Training & Validation ground-truth are added in dataset directory.
 The train_map and val_map directory will be automatically created.
