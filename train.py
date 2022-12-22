@@ -125,6 +125,7 @@ def main(cfg):
     logging.info(f'Using device {device}')
 
     net = model(n_channels=3, n_classes=1, num=8, sub_batch = cfg.train.batch_size, bilinear=True)
+    
     logging.info(f'Network:\n'
                  f'\t{net.n_channels} input channels\n'
                  f'\t{net.n_classes} output channels\n'

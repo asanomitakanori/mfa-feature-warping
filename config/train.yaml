@@ -1,7 +1,7 @@
 # Hydra configuration file for training
 
 train:
-  imgs: 'dataset/train_imgs/'                # Train images path
+  imgs: 'dataset/train/train_imgs/'          # Train images path
   epochs: 30                                 # Number of epoch
   batch_size: 3                              # Batch size
   video_number : 8                           # Video num (All input number is batch_size * video num)
@@ -10,7 +10,7 @@ train:
   seed : 0
   
 eval:
-  imgs: '.dataset/val_imgs/'                 # Validation images path
+  imgs: '.dataset/val/val_imgs/'             # Validation images path
   rate: 0.2                                  # Evaluation rate for no eval data
   batch_size: 3 
   train: False
@@ -25,6 +25,3 @@ dataloader:
   edge: 10                     # Image edge range (This area will not be cropped)
   height: 1024                 # Number of pixel of crop height
   width: 1856                  # Number of pixel of crop width
-  
-device_num:
-  1

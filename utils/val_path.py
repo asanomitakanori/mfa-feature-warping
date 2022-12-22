@@ -2,6 +2,7 @@ from glob import glob
 from os.path import join
 from hydra.utils import to_absolute_path as abs_path
 
+
 # あとでlistを保存して呼び込む形に変更
 def val_path(eval_imgs_path):
     valdata_list = []
