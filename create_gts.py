@@ -48,9 +48,9 @@ lm = gaussian_filter(lm, sigma=sigma, mode="constant")
 lm = minmax(lm)
 
 # Create validation gts heatmap 
-for index, text in enumerate(natsorted(glob(abs_path('dataset/val_txt/*')))):
+for index, text in enumerate(natsorted(glob(abs_path('dataset/val/val_txt/*')))):
     m = int(text.split('video')[1].split('.txt')[0])
-    save_dir = abs_path('dataset/val_gts') + "/sequence{}".format(str(m).zfill(3))
+    save_dir = abs_path('dataset/val/val_gts') + "/sequence{}".format(str(m).zfill(3))
     os.makedirs(abs_path(save_dir)) if os.path.isdir(abs_path(save_dir)) is False else None
     data = np.loadtxt(text)
     print(data)
@@ -68,9 +68,9 @@ for index, text in enumerate(natsorted(glob(abs_path('dataset/val_txt/*')))):
 
 
 # Create train gts heatmap 
-for index, text in enumerate(natsorted(glob(abs_path('dataset/train_txt/*')))):
+for index, text in enumerate(natsorted(glob(abs_path('dataset/train/train_txt/*')))):
     m = int(text.split('video')[1].split('.txt')[0])
-    save_dir = abs_path('dataset/train_gts') + "/sequence{}".format(str(m).zfill(3))
+    save_dir = abs_path('dataset/train/train_gts') + "/sequence{}".format(str(m).zfill(3))
     os.makedirs(abs_path(save_dir)) if os.path.isdir(abs_path(save_dir)) is False else None
     data = np.loadtxt(text)
     print(data)
