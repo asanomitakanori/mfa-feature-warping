@@ -31,6 +31,7 @@ DroneCrowd [BaiduYun](https://pan.baidu.com/s/1hjXoVZJ16y9Tf7UXcJw3oQ)(code:ml1u
 Please prepare your data you installed as above as follows.
 
 <details><summary>current dir</summary><div>
+
 ```
 ./dataset
     ├── train
@@ -38,18 +39,19 @@ Please prepare your data you installed as above as follows.
     │        ├── sequence001                # Each sequence has 300 images 
     │        ├── sequence002
     │        ├── :
-    │
+    │        └── sequenceN                       
     ├── val  
     │   └─ val_imgs                          # Same structure of train_imgs
     │        ├── sequence011                # Each sequence has 12 images 
     │        ├── sequence015
     │        ├── :
-    │    
+    │        └── sequenceM  
     └── test
          └── test_imgs                       # Same structure of train_imgs.
               ├── sequence011                # Each sequence has 300 images 
               ├── sequence015
               ├── :
+              └── sequenceM  
 ```
 </div></details>
 
@@ -70,9 +72,11 @@ $ python train.py
 ```
 
 ### Arguments
-You can set up input path/output path/parameters from config/train.yaml
+You can set up input path/output path/parameters from <code>config/train.yaml</code>.
 
-## Pre-trained models	
+## Test
+Comming soon
+### Pre-trained models	
 The trained models are available in the folder <code>/models/trained</code>.
 
 ## Citation
