@@ -26,6 +26,6 @@ def val_path(eval_imgs_path):
                 cur_img = imgs[i]
                 seq_id1 = seqids[i]
                 clip.append(cur_img)
-                
+
             val_clip.append(clip[::-1])
     return val_clip

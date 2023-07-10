@@ -5,12 +5,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.functional as nnf
 
+
 class SpatialTransformer(nn.Module):
     """
     N-D Spatial Transformer
     """
 
-    def __init__(self, mode='bilinear'):
+    def __init__(self, mode="bilinear"):
         super().__init__()
 
         self.mode = mode
@@ -59,11 +60,12 @@ class DoubleConv(nn.Module):
             nn.ReLU(inplace=True),
             nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1),
             nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
         )
 
     def forward(self, x):
         return self.double_conv(x)
+
 
 class DoubleConv_flow(nn.Module):
     """(convolution => [BN] => ReLU) * 2"""
@@ -90,8 +92,7 @@ class Down(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
         self.maxpool_conv = nn.Sequential(
-            nn.MaxPool2d(2),
-            DoubleConv(in_channels, out_channels)
+            nn.MaxPool2d(2), DoubleConv(in_channels, out_channels)
         )
 
     def forward(self, x):
@@ -106,12 +107,13 @@ class Up(nn.Module):
 
         # if bilinear, use the normal convolutions to reduce the number of channels
         if bilinear:
-            self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+            self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
             self.conv = DoubleConv(in_channels, out_channels, in_channels // 2)
         else:
-            self.up = nn.ConvTranspose2d(in_channels , in_channels // 2, kernel_size=2, stride=2)
+            self.up = nn.ConvTranspose2d(
+                in_channels, in_channels // 2, kernel_size=2, stride=2
+            )
             self.conv = DoubleConv(in_channels, out_channels)
-
 
     def forward(self, x1, x2):
         x1 = self.up(x1)
@@ -119,8 +121,7 @@ class Up(nn.Module):
         diffY = x2.size()[2] - x1.size()[2]
         diffX = x2.size()[3] - x1.size()[3]
 
-        x1 = F.pad(x1, [diffX // 2, diffX - diffX // 2,
-                        diffY // 2, diffY - diffY // 2])
+        x1 = F.pad(x1, [diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2])
         # if you have padding issues, see
         # https://github.com/HaiyongJiang/U-Net-Pytorch-Unstructured-Buggy/commit/0e854509c2cea854e247a9c615f175f76fbb2e3a
         # https://github.com/xiaopeng-liao/Pytorch-UNet/commit/8ebac70e633bac59fc22bb5195e513d5832fb3bd
@@ -136,55 +137,86 @@ class OutConv(nn.Module):
     def forward(self, x):
         return self.conv(x)
 
+
 class Flow_estimation(nn.Module):
-    '''Estimating flow (tgt : index=0, src : others)'''
+    """Estimating flow (tgt : index=0, src : others)"""
+
     def __init__(self, n_channels, sub_batch):
         super().__init__()
         num = n_channels
-        self.inc = DoubleConv_flow(n_channels*2, num*2)
-        self.inc2 = DoubleConv_flow(num*2, num*2)
-        self.inc3 = DoubleConv_flow(num*2, num*2)
-        self.out = OutConv(num*2, 2)
+        self.inc = DoubleConv_flow(n_channels * 2, num * 2)
+        self.inc2 = DoubleConv_flow(num * 2, num * 2)
+        self.inc3 = DoubleConv_flow(num * 2, num * 2)
+        self.out = OutConv(num * 2, 2)
         self.warp = SpatialTransformer(mode="bilinear")
         self.sub_batch_size = sub_batch
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def forward(self, img):
         output = []
         flow_out = []
-        img = img.reshape(int(img.shape[0]/self.sub_batch_size), self.sub_batch_size, img.shape[1], img.shape[2], img.shape[3]).squeeze()
+        img = img.reshape(
+            int(img.shape[0] / self.sub_batch_size),
+            self.sub_batch_size,
+            img.shape[1],
+            img.shape[2],
+            img.shape[3],
+        ).squeeze()
         if len(img.shape) != 5:
             img = img.unsqueeze(0)
         for index in range(img.shape[0]):
-            tgt = img[index][0].repeat(img[index].shape[0]-1, 1, 1, 1)
+            tgt = img[index][0].repeat(img[index].shape[0] - 1, 1, 1, 1)
             src = img[index][1:]
             temp = torch.cat([tgt, src], dim=1)
             flow = self.out(self.inc3(self.inc2(self.inc(temp))))
             src_warp = self.warp(src, flow)
-            flow_out.append(torch.cat([torch.zeros((flow.shape))[0].unsqueeze(0).to(device = self.device), flow]))
+            flow_out.append(
+                torch.cat(
+                    [
+                        torch.zeros((flow.shape))[0]
+                        .unsqueeze(0)
+                        .to(device=self.device),
+                        flow,
+                    ]
+                )
+            )
             output.append(torch.cat([img[index][0].unsqueeze(0), src_warp]))
         output = torch.cat(output)
         flow_out = torch.cat(flow_out)
         return flow_out, output
 
+
 class Backlow_estimation(nn.Module):
-    '''Estimating flow (tgt : index=1. 2. ...., src : index = 1. 2. ....)'''
+    """Estimating flow (tgt : index=1. 2. ...., src : index = 1. 2. ....)"""
+
     def __init__(self, n_channels, sub_batch):
         super().__init__()
         num = n_channels
-        self.inc = DoubleConv_flow(n_channels*2, num*2)
-        self.inc2 = DoubleConv_flow(num*2, num*2)
-        self.inc3 = DoubleConv_flow(num*2, num*2)
-        self.out = OutConv(num*2, 2)
+        self.inc = DoubleConv_flow(n_channels * 2, num * 2)
+        self.inc2 = DoubleConv_flow(num * 2, num * 2)
+        self.inc3 = DoubleConv_flow(num * 2, num * 2)
+        self.out = OutConv(num * 2, 2)
         self.warp = SpatialTransformer(mode="bilinear")
         self.sub_batch_size = sub_batch
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def forward(self, target, source):
         output = []
         flow_out = []
-        tgt = target.reshape(int(target.shape[0]/self.sub_batch_size), self.sub_batch_size, target.shape[1], target.shape[2], target.shape[3]).squeeze()
-        src_ = source.reshape(int(target.shape[0]/self.sub_batch_size), self.sub_batch_size, target.shape[1], target.shape[2], target.shape[3]).squeeze()
+        tgt = target.reshape(
+            int(target.shape[0] / self.sub_batch_size),
+            self.sub_batch_size,
+            target.shape[1],
+            target.shape[2],
+            target.shape[3],
+        ).squeeze()
+        src_ = source.reshape(
+            int(target.shape[0] / self.sub_batch_size),
+            self.sub_batch_size,
+            target.shape[1],
+            target.shape[2],
+            target.shape[3],
+        ).squeeze()
         if len(tgt.shape) != 5:
             tgt = tgt.unsqueeze(0)[:, 1:, :, :, :]
             src = src_.unsqueeze(0)[:, 1:, :, :, :]
@@ -192,8 +224,19 @@ class Backlow_estimation(nn.Module):
                 temp = torch.cat([tgt[index], src[index]], dim=1)
                 flow = self.out(self.inc3(self.inc2(self.inc(temp))))
                 src_warp = self.warp(src[index], flow)
-                output.append(torch.cat([src_.unsqueeze(0)[index][0].unsqueeze(0), src_warp]))
-                flow_out.append(torch.cat([torch.zeros((flow.shape))[0].unsqueeze(0).to(device = self.device), flow]))
+                output.append(
+                    torch.cat([src_.unsqueeze(0)[index][0].unsqueeze(0), src_warp])
+                )
+                flow_out.append(
+                    torch.cat(
+                        [
+                            torch.zeros((flow.shape))[0]
+                            .unsqueeze(0)
+                            .to(device=self.device),
+                            flow,
+                        ]
+                    )
+                )
         else:
             tgt = tgt[:, 1:, :, :, :]
             src = src_[:, 1:, :, :, :]
@@ -202,7 +245,16 @@ class Backlow_estimation(nn.Module):
                 flow = self.out(self.inc3(self.inc2(self.inc(temp))))
                 src_warp = self.warp(src[index], flow)
                 output.append(torch.cat([src_[index][0].unsqueeze(0), src_warp]))
-                flow_out.append(torch.cat([torch.zeros((flow.shape))[0].unsqueeze(0).to(device = self.device), flow]))
+                flow_out.append(
+                    torch.cat(
+                        [
+                            torch.zeros((flow.shape))[0]
+                            .unsqueeze(0)
+                            .to(device=self.device),
+                            flow,
+                        ]
+                    )
+                )
         output = torch.cat(output)
         flow_out = torch.cat(flow_out)
         return flow_out, output

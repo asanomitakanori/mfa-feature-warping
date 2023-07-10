@@ -2,15 +2,16 @@ import numpy as np
 from torch.utils import data as data
 import random
 
+
 def split_list(l, n):
     """
     リストをサブリストに分割する
     :param l: リスト
     :param n: サブリストの要素数
-    :return: 
+    :return:
     """
     for idx in range(0, len(l), n):
-        yield l[idx:idx + n]
+        yield l[idx : idx + n]
 
 
 class MyDataset(data.Dataset):
@@ -30,7 +31,7 @@ class SequentialSampler(data.Sampler):
         self.dataset = dataset
         self.batch_size = batch_size
         self.shuffle = shuffle
-    
+
     def __len__(self):
         return len(self.dataset) // self.batch_size
 
@@ -40,5 +41,3 @@ class SequentialSampler(data.Sampler):
             return iter(random.sample(temp, len(temp)))
         if self.shuffle == False:
             return iter(temp)
-
-

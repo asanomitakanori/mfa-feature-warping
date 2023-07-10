@@ -14,12 +14,13 @@ from scipy import spatial
 import scipy.ndimage as ndimage
 import scipy.ndimage.filters as filters
 
-def load_train_data(root, train_step = 1):
+
+def load_train_data(root, train_step=1):
     # training data
-    train_path = os.path.join(root, 'train_data', 'images')
+    train_path = os.path.join(root, "train_data", "images")
     train_list = []
     count = 0
-    for img_path in glob.glob(os.path.join(train_path, '*.jpg')):
+    for img_path in glob.glob(os.path.join(train_path, "*.jpg")):
         if count % train_step == 0:
             train_list.append(img_path)
         count += 1
@@ -42,11 +43,12 @@ def load_train_data(root, train_step = 1):
 
     return train_pair
 
-def load_val_data(root, val_step = 10):
+
+def load_val_data(root, val_step=10):
     # validation data
-    val_path = os.path.join(root, 'val_data', 'images')
+    val_path = os.path.join(root, "val_data", "images")
     val_list = []
-    for img_path in glob.glob(os.path.join(val_path, '*.jpg')):
+    for img_path in glob.glob(os.path.join(val_path, "*.jpg")):
         val_list.append(img_path)
     val_list.sort()
     val_pair = []
@@ -70,10 +72,11 @@ def load_val_data(root, val_step = 10):
 
     return val_pair
 
-def load_test_data(root, test_step = 5):
-    test_path = os.path.join(root, 'test_data', 'images')
+
+def load_test_data(root, test_step=5):
+    test_path = os.path.join(root, "test_data", "images")
     test_list = []
-    for img_path in glob.glob(os.path.join(test_path, '*.jpg')):
+    for img_path in glob.glob(os.path.join(test_path, "*.jpg")):
         test_list.append(img_path)
     test_list.sort()
     test_pair = []
@@ -98,6 +101,7 @@ def load_test_data(root, test_step = 5):
                     break
     return test_pair
 
+
 def load_pretrained_model(model_name, model):
     # print("=> loading checkpoint")
     # # checkpoint = torch.load(model_name)
@@ -111,31 +115,36 @@ def load_pretrained_model(model_name, model):
     # model.load_state_dict(my_models)
     return model
 
+
 def load_txt(fname):
     lines = fname.readlines()
     outs = []
     for i in range(len(lines)):
         predata = []
         for j in range(len(list(lines[0].split()))):
-            predata.append(float(lines[i].split(' ')[j]))
+            predata.append(float(lines[i].split(" ")[j]))
         outs.append(predata)
     return outs
 
 
 def save_net(fname, net):
-    with h5py.File(fname, 'w') as h5f:
+    with h5py.File(fname, "w") as h5f:
         for k, v in net.state_dict().items():
             h5f.create_dataset(k, data=v.cpu().numpy())
+
+
 def load_net(fname, net):
-    with h5py.File(fname, 'r') as h5f:
-        for k, v in net.state_dict().items():        
-            param = torch.from_numpy(np.asarray(h5f[k]))         
+    with h5py.File(fname, "r") as h5f:
+        for k, v in net.state_dict().items():
+            param = torch.from_numpy(np.asarray(h5f[k]))
             v.copy_(param)
-            
-def save_checkpoint(state, is_best,task_id, filename='checkpoint.pth.tar'):
-    torch.save(state, task_id+filename)
+
+
+def save_checkpoint(state, is_best, task_id, filename="checkpoint.pth.tar"):
+    torch.save(state, task_id + filename)
     if is_best:
-        shutil.copyfile(task_id+filename, task_id+'model_best.pth.tar')            
+        shutil.copyfile(task_id + filename, task_id + "model_best.pth.tar")
+
 
 def draw_hsv(flow):
     h, w = flow.shape[:2]
@@ -148,6 +157,7 @@ def draw_hsv(flow):
     hsv[..., 2] = np.minimum(v * 4, 255)
     bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
     return bgr
+
 
 def gaussian_filter_density(gt):
     density = np.zeros(gt.shape, dtype=np.float32)
@@ -164,16 +174,16 @@ def gaussian_filter_density(gt):
 
     for i, pt in enumerate(pts):
         pt2d = np.zeros(gt.shape, dtype=np.float32)
-        pt2d[pt[1],pt[0]] = 1.
+        pt2d[pt[1], pt[0]] = 1.0
         if gt_count > 1:
-            sigma = (distances[i][1]+distances[i][2]+distances[i][3])*0.1
+            sigma = (distances[i][1] + distances[i][2] + distances[i][3]) * 0.1
         else:
-            sigma = np.average(np.array(gt.shape))/2./2. #case: 1 point
-        density += scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode='constant')
+            sigma = np.average(np.array(gt.shape)) / 2.0 / 2.0  # case: 1 point
+        density += scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode="constant")
     return density
 
 
-def pt_eval(gt,x,y,sc):
+def pt_eval(gt, x, y, sc):
     gx, gy = [], []
     for k in range(len(gt[0])):
         if gt[0][k][0] > 0:
@@ -201,7 +211,13 @@ def pt_eval(gt,x,y,sc):
     posnum += cnt
     negnum += len(x) - cnt
     gtnum += len(gx)
-    pts = np.hstack((np.expand_dims(x.T,axis=1), np.expand_dims(y.T,axis=1), np.expand_dims(sc.T,axis=1)))
+    pts = np.hstack(
+        (
+            np.expand_dims(x.T, axis=1),
+            np.expand_dims(y.T, axis=1),
+            np.expand_dims(sc.T, axis=1),
+        )
+    )
     return gtnum, posnum, negnum, pts
 
 
@@ -211,7 +227,7 @@ def calc_trkpt(outpts, outscs, thre, ourmap, neighbor_thre, ratio):
     data_max = filters.maximum_filter(ourmap, neighbor_thre)
     data_min = filters.minimum_filter(ourmap, neighbor_thre)
     maxima = ourmap == data_max
-    diffmap = ((data_max - data_min) > 0.001)
+    diffmap = (data_max - data_min) > 0.001
     maxima[diffmap == 0] = 0
     labeled, num_objects = ndimage.label(maxima)
     slices = ndimage.find_objects(labeled)
@@ -222,13 +238,13 @@ def calc_trkpt(outpts, outscs, thre, ourmap, neighbor_thre, ratio):
         x.append(x_center)
         y_center = (dy.start + dy.stop - 1) / 2 * ratio
         y.append(y_center)
-        sc.append(ourmap[int(y_center/ratio), int(x_center/ratio)])
+        sc.append(ourmap[int(y_center / ratio), int(x_center / ratio)])
 
     # points from tracking
     for k in range(outpts.shape[0]):
-        if outscs[k]>=thre:
-            x_center = outpts[k,1] * ratio
-            y_center = outpts[k,0] * ratio
+        if outscs[k] >= thre:
+            x_center = outpts[k, 1] * ratio
+            y_center = outpts[k, 0] * ratio
             x.append(x_center)
             y.append(y_center)
             sc.append(outscs[k])
@@ -238,13 +254,14 @@ def calc_trkpt(outpts, outscs, thre, ourmap, neighbor_thre, ratio):
     sc = np.asarray(sc, dtype=np.float32)
     return x, y, sc
 
+
 def calc_locpt(locmap, regmap, thre, ourmap, neighbor_thre, ratio):
     binamap = ourmap > 0
     ourmap[binamap == 0] = 0
     data_max = filters.maximum_filter(ourmap, neighbor_thre)
     data_min = filters.minimum_filter(ourmap, neighbor_thre)
     maxima = ourmap == data_max
-    diffmap = ((data_max - data_min) > 0.001)
+    diffmap = (data_max - data_min) > 0.001
     maxima[diffmap == 0] = 0
     labeled, num_objects = ndimage.label(maxima)
     slices = ndimage.find_objects(labeled)
@@ -255,14 +272,14 @@ def calc_locpt(locmap, regmap, thre, ourmap, neighbor_thre, ratio):
         x.append(x_center)
         y_center = (dy.start + dy.stop - 1) / 2 * ratio
         y.append(y_center)
-        sc.append(ourmap[int(y_center/ratio), int(x_center/ratio)])
+        sc.append(ourmap[int(y_center / ratio), int(x_center / ratio)])
 
     binamap = locmap > thre
     locmap[binamap == 0] = 0
     data_max = filters.maximum_filter(locmap, neighbor_thre)
     data_min = filters.minimum_filter(locmap, neighbor_thre)
     maxima = locmap == data_max
-    diffmap = ((data_max - data_min) > 0.001)
+    diffmap = (data_max - data_min) > 0.001
     maxima[diffmap == 0] = 0
     labeled, num_objects = ndimage.label(maxima)
     slices = ndimage.find_objects(labeled)
@@ -271,22 +288,23 @@ def calc_locpt(locmap, regmap, thre, ourmap, neighbor_thre, ratio):
         x_center = (dx.start + dx.stop - 1) / 2 * ratio
         y_center = (dy.start + dy.stop - 1) / 2 * ratio
         offset = regmap[:, int(y_center / ratio), int(x_center / ratio)]
-        x.append(x_center+offset[1]*5*ratio)
-        y.append(y_center+offset[0]*5*ratio)
-        sc.append(locmap[int(y_center/ratio), int(x_center/ratio)])
+        x.append(x_center + offset[1] * 5 * ratio)
+        y.append(y_center + offset[0] * 5 * ratio)
+        sc.append(locmap[int(y_center / ratio), int(x_center / ratio)])
 
     x = np.asarray(x, dtype=np.float32)
     y = np.asarray(y, dtype=np.float32)
     sc = np.asarray(sc, dtype=np.float32)
     return x, y, sc
- 
+
+
 def calc_denpt(ourmap, neighbor_thre, ratio):
     binamap = ourmap > 0
     ourmap[binamap == 0] = 0
     data_max = filters.maximum_filter(ourmap, neighbor_thre)
     data_min = filters.minimum_filter(ourmap, neighbor_thre)
     maxima = ourmap == data_max
-    diffmap = ((data_max - data_min) > 0.001)
+    diffmap = (data_max - data_min) > 0.001
     maxima[diffmap == 0] = 0
 
     labeled, num_objects = ndimage.label(maxima)
@@ -298,7 +316,7 @@ def calc_denpt(ourmap, neighbor_thre, ratio):
         x.append(x_center)
         y_center = (dy.start + dy.stop - 1) / 2 * ratio
         y.append(y_center)
-        sc.append(ourmap[int(y_center/ratio), int(x_center/ratio)])
+        sc.append(ourmap[int(y_center / ratio), int(x_center / ratio)])
 
     x = np.asarray(x, dtype=np.float32)
     y = np.asarray(y, dtype=np.float32)
@@ -306,7 +324,7 @@ def calc_denpt(ourmap, neighbor_thre, ratio):
     return x, y, sc
 
 
-def localization(gt,x,y,sc):
+def localization(gt, x, y, sc):
     temp = sc
     Pre = []
     gx, gy = [], []
@@ -342,15 +360,19 @@ def localization(gt,x,y,sc):
             if min_dist <= localization:
                 cnt += 1
             if ii >= 1:
-                if recall[ii-1] == cnt / len(gx):
-                    precision.append(cnt / (ii+1))
-                    recall.append(cnt / len(gx))             
-                else:
-                    precision.append(cnt / (ii+1))
+                if recall[ii - 1] == cnt / len(gx):
+                    precision.append(cnt / (ii + 1))
                     recall.append(cnt / len(gx))
-                    AP.append((recall[ii] - recall[ii-1])*(precision[ii]+precision[ii-1])*0.5)
+                else:
+                    precision.append(cnt / (ii + 1))
+                    recall.append(cnt / len(gx))
+                    AP.append(
+                        (recall[ii] - recall[ii - 1])
+                        * (precision[ii] + precision[ii - 1])
+                        * 0.5
+                    )
             else:
-                precision.append(cnt / (ii+1))
+                precision.append(cnt / (ii + 1))
                 recall.append(cnt / len(gx))
         mAP.append(np.sum(AP))
         Pre.append(np.sum(precision))

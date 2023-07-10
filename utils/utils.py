@@ -6,7 +6,8 @@ from tqdm import tqdm
 import torch
 from scipy.ndimage.filters import gaussian_filter
 
-def pt_eval(gt,x,y,sc):
+
+def pt_eval(gt, x, y, sc):
     gx, gy = [], []
     for k in range(len(gt[0])):
         if gt[0][k][0] > 0:
@@ -34,38 +35,70 @@ def pt_eval(gt,x,y,sc):
     posnum += cnt
     negnum += len(x) - cnt
     gtnum += len(gx)
-    pts = np.hstack((np.expand_dims(x.T,axis=1), np.expand_dims(y.T,axis=1), np.expand_dims(sc.T,axis=1)))
+    pts = np.hstack(
+        (
+            np.expand_dims(x.T, axis=1),
+            np.expand_dims(y.T, axis=1),
+            np.expand_dims(sc.T, axis=1),
+        )
+    )
     return gtnum, posnum, negnum, pts
 
+
 def getpoints(mag, mag_max=1.0, th=0.1):
-    '''
+    """
     Args:
         mpm (numpy.ndarray): MPM
         mag (numpy.ndarray): Magnitude of MPM i.e. heatmap
         mag_max: Maximum value of heatmap
     Return:
         result (numpy.ndarray): Table of peak coordinates, warped coordinates, and peak value [x, y, wx, wy, pv]
-    '''
+    """
     mag[mag > mag_max] = mag_max
-    map_left_top, map_top, map_right_top = np.zeros(mag.shape), np.zeros(mag.shape), np.zeros(mag.shape)
+    map_left_top, map_top, map_right_top = (
+        np.zeros(mag.shape),
+        np.zeros(mag.shape),
+        np.zeros(mag.shape),
+    )
     map_left, map_right = np.zeros(mag.shape), np.zeros(mag.shape)
-    map_left_bottom, map_bottom, map_right_bottom = np.zeros(mag.shape), np.zeros(mag.shape), np.zeros(mag.shape)
-    map_left_top[1:, 1:], map_top[:, 1:], map_right_top[:-1, 1:] = mag[:-1, :-1], mag[:, :-1], mag[1:, :-1]
+    map_left_bottom, map_bottom, map_right_bottom = (
+        np.zeros(mag.shape),
+        np.zeros(mag.shape),
+        np.zeros(mag.shape),
+    )
+    map_left_top[1:, 1:], map_top[:, 1:], map_right_top[:-1, 1:] = (
+        mag[:-1, :-1],
+        mag[:, :-1],
+        mag[1:, :-1],
+    )
     map_left[1:, :], map_right[:-1, :] = mag[:-1, :], mag[1:, :]
-    map_left_bottom[1:, :-1], map_bottom[:, :-1], map_left_bottom[1:, :-1] = mag[:-1, 1:], mag[:, 1:], mag[1:, 1:]
-    peaks_binary = np.logical_and.reduce((
-        mag >= map_left_top, mag >= map_top, mag >= map_right_top,
-        mag >= map_left, mag > th, mag >= map_right,
-        mag >= map_left_bottom, mag >= map_bottom, mag >= map_right_bottom,
-    ))
-    _, _, _, center = cv2.connectedComponentsWithStats((peaks_binary * 1).astype('uint8'))
+    map_left_bottom[1:, :-1], map_bottom[:, :-1], map_left_bottom[1:, :-1] = (
+        mag[:-1, 1:],
+        mag[:, 1:],
+        mag[1:, 1:],
+    )
+    peaks_binary = np.logical_and.reduce(
+        (
+            mag >= map_left_top,
+            mag >= map_top,
+            mag >= map_right_top,
+            mag >= map_left,
+            mag > th,
+            mag >= map_right,
+            mag >= map_left_bottom,
+            mag >= map_bottom,
+            mag >= map_right_bottom,
+        )
+    )
+    _, _, _, center = cv2.connectedComponentsWithStats(
+        (peaks_binary * 1).astype("uint8")
+    )
     center = center[1:]
     result = []
-    for center_cell in center.astype('int'):
+    for center_cell in center.astype("int"):
         mag_value = mag[center_cell[1], center_cell[0]]
         result.append([center_cell[0], center_cell[1], mag_value])
     return result
-
 
 
 def inferenceMPM(model, names, ch=None, max_v=255):
@@ -104,21 +137,25 @@ def getIndicatedPoints(acm, mag_max=0.9, mag_min=0.1, z_value=5, gauss=False, si
     map_right_top[:-1, 1:] = mag[1:, :-1]
     map_left_bottom[1:, :-1] = mag[:-1, 1:]
     map_right_bottom[:-1, :-1] = mag[1:, 1:]
-    peaks_binary = np.logical_and.reduce((
-        mag >= map_left,
-        mag >= map_right,
-        mag >= map_top,
-        mag >= map_bottom,
-        mag >= map_left_top,
-        mag >= map_left_bottom,
-        mag >= map_right_top,
-        mag >= map_right_bottom,
-        mag > mag_min
-    ))
-    _, _, _, center = cv2.connectedComponentsWithStats((peaks_binary * 1).astype('uint8'))
+    peaks_binary = np.logical_and.reduce(
+        (
+            mag >= map_left,
+            mag >= map_right,
+            mag >= map_top,
+            mag >= map_bottom,
+            mag >= map_left_top,
+            mag >= map_left_bottom,
+            mag >= map_right_top,
+            mag >= map_right_bottom,
+            mag > mag_min,
+        )
+    )
+    _, _, _, center = cv2.connectedComponentsWithStats(
+        (peaks_binary * 1).astype("uint8")
+    )
     center = center[1:]
     result = []
-    for center_cell in center.astype('int'):
+    for center_cell in center.astype("int"):
         vec = acm[center_cell[1], center_cell[0]]
         mag_value = mag[center_cell[1], center_cell[0]]
         vec = vec / np.linalg.norm(vec)
@@ -127,7 +164,15 @@ def getIndicatedPoints(acm, mag_max=0.9, mag_min=0.1, z_value=5, gauss=False, si
         y = 0 if vec[0] == 0 else z_value * (vec[0] / vec[2])
         x = int(x)
         y = int(y)
-        result.append([center_cell[0], center_cell[1], center_cell[0] + x, center_cell[1] + y, mag_value])
+        result.append(
+            [
+                center_cell[0],
+                center_cell[1],
+                center_cell[0] + x,
+                center_cell[1] + y,
+                mag_value,
+            ]
+        )
 
     return np.array(result)
 
@@ -147,19 +192,36 @@ def calculate_homography_matrix(origin, dest):
 
     # 点を調整する（数値計算上重要）
     origin, c1 = normalize(origin)  # 変換元
-    dest, c2 = normalize(dest)      # 変換先
+    dest, c2 = normalize(dest)  # 変換先
 
     # 線形法計算のための行列を作る。
     nbr_correspondences = origin.shape[1]
     a = np.zeros((2 * nbr_correspondences, 9))
     for i in range(nbr_correspondences):
-        a[2 * i] = [-origin[0][i], -origin[1][i], -1, 0, 0, 0, dest[0][i] * origin[0][i], dest[0][i] * origin[1][i],
-                    dest[0][i]]
-        a[2 * i + 1] = [0, 0, 0, -origin[0][i], -origin[1][i], -1, dest[1][i] * origin[0][i], dest[1][i] * origin[1][i],
-                        dest[1][i]]
+        a[2 * i] = [
+            -origin[0][i],
+            -origin[1][i],
+            -1,
+            0,
+            0,
+            0,
+            dest[0][i] * origin[0][i],
+            dest[0][i] * origin[1][i],
+            dest[0][i],
+        ]
+        a[2 * i + 1] = [
+            0,
+            0,
+            0,
+            -origin[0][i],
+            -origin[1][i],
+            -1,
+            dest[1][i] * origin[0][i],
+            dest[1][i] * origin[1][i],
+            dest[1][i],
+        ]
     u, s, v = np.linalg.svd(a)
     homography_matrix = v[8].reshape((3, 3))
     homography_matrix = np.dot(np.linalg.inv(c2), np.dot(homography_matrix, c1))
     homography_matrix = homography_matrix / homography_matrix[2, 2]
     return homography_matrix
-
