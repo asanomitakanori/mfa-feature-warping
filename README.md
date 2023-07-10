@@ -82,6 +82,15 @@ The trained models are available in the folder <code>/models/trained</code>.
 ## Citation
 Please cite this paper if you want to use it in your work.
 ```
+@inproceedings{asanomi2023multi,
+  title={Multi-Frame Attention with Feature-Level Warping for Drone Crowd Tracking},
+  author={Asanomi, Takanori and Nishimura, Kazuya and Bise, Ryoma},
+  booktitle={Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision},
+  pages={1664--1673},
+  year={2023}
+}
+```
+```
 @inproceedings{dronecrowd_cvpr2021,
   author    = {Longyin Wen and
                Dawei Du and
@@ -93,14 +102,5 @@ Please cite this paper if you want to use it in your work.
   title     = {Detection, Tracking, and Counting Meets Drones in Crowds: A Benchmark},
   booktitle = {CVPR},
   year      = {2021}
-}
-```
-```
-@article{zhu2021graph,
-  title={Graph Regularized Flow Attention Network for Video Animal Counting from Drones},
-  author={Zhu, Pengfei and Peng, Tao and Du, Dawei and Yu, Hongtao and Zhang, Libo and Hu, Qinghua},
-  journal={IEEE Transactions on Image Processing},
-  year={2021},
-  publisher={IEEE}
 }
 ```
